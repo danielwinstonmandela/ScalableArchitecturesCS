@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from .models import TrackRequest, TrackOut, TrackTable
-from .database import get_db
+from catalog_service.models import TrackRequest, TrackOut, TrackTable
+from catalog_service.database import get_db
 
 router = APIRouter()
 
