@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.future import select
-from .models import UserTable
-from .database import get_db
+from user_service.models import UserTable
+from user_service.database import get_db
 from fastapi import Request
 
 def get_token_from_header(request: Request):
