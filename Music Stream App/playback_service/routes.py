@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from .database import get_db
-from .models import Playback
+from playback_service.database import get_db
+from playback_service.models import Playback
 from sqlalchemy.future import select
 
 router = APIRouter()

@@ -1,4 +1,4 @@
-from .base import Event
+from events.base import Event
 from datetime import datetime
 
 class TrackPlayed(Event):
