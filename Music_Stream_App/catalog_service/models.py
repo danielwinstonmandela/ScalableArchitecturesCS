@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, LargeBinary
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
@@ -14,3 +14,4 @@ class Song(Base):
     genre = Column(String)
     duration = Column(Integer)
     release_year = Column(Integer)
+    audio_blob = Column(LargeBinary, nullable=False)  
