@@ -280,6 +280,27 @@ All services will be accessible via different ports:
 - Music Catalogue → localhost:8002
 - Playback → localhost:8003
 
+## 🛠️ Setting Up the Frontend and Catalog Service
+
+While Daniel was building the frontend to demonstrate that our backend services were working properly, he ran into a persistent issue: adding songs to the catalog service kept failing.
+
+After a bit of digging, we realized the problem was that the databases for our services hadn’t been initialized — the necessary tables hadn’t been created yet. So essentially, we were trying to insert data into thin air... yeah, not ideal 😂
+
+Once we set up the database tables correctly in each service, things started working as expected. The frontend successfully connected to the backend, and adding a song through our `AddSongForm` component would properly send it to the catalog service running on `localhost:8002`.
+
+---
+
+## 🎵 Uploading Real Audio Files (MP3 Support)
+
+We wanted to go one step further and support real song uploads — actual `.mp3` files, not just song metadata.
+
+Initially, we thought this might require using third-party cloud storage like **Google Cloud Storage**, **AWS S3**, or **Azure Blob Storage**. But we wanted to keep the stack lightweight and fully local, so we decided to store the audio files directly in our database using a `LargeBinary` (BLOB) field.
+
+This approach came with its own challenges (and a bit of chaos 😅), but we eventually got it working. Users can now upload `.mp3` files via the frontend, and they will be saved and streamed from our backend — no external services required!
+
+---
+
+✅ Final result: You can now add songs with audio files through the frontend and they’ll be listed and playable directly from our local catalog service.
 
 ---
 
@@ -296,7 +317,7 @@ This project gave us a solid hands-on experience building a scalable microservic
 
 ### Challenges & Real Talk
 
-- Honestly, there were moments where **we didn’t know what the fuck we were doing**. Figuring out async database calls, proper API design, and integrating Redis took a lot of trial and error.  
+- We’ll be honest—there were moments where we felt completely stuck for hours (it made us cry like literally 😭). Figuring out async database calls, proper API design, and integrating Redis took a lot of trial and error.  
 - Managing multiple services and their dependencies was trickier than expected, especially when debugging inter-service communication.  
 - Writing clean, maintainable code while rushing to meet deadlines was tough, but we grew a lot through it.
 
