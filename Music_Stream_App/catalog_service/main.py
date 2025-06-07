@@ -2,14 +2,37 @@ from fastapi import FastAPI
 from catalog_service.routes import router
 import os
 import redis
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from catalog_service.models import Base
 
+# FastAPI app setup
 app = FastAPI()
 app.include_router(router)
 
-# Set up Redis connection using Docker environment variables
+# Redis setup
 redis_host = os.getenv("REDIS_HOST", "localhost")
 redis_port = int(os.getenv("REDIS_PORT", 6379))
 redis_client = redis.Redis(host=redis_host, port=redis_port, db=0)
+
+# Database setup
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost/catalogdb"
+)
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+# Dependency for getting DB session
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
+
+# Create tables at startup
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Catalog DB tables created/verified.")
 
 @app.get("/")
 def root():

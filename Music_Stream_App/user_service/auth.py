@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.future import select
-from user_service.models import UserTable
+from user_service.models import User
 from user_service.database import get_db
 from fastapi import Request
 
