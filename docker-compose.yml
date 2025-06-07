@@ -39,8 +39,11 @@ services:
       dockerfile: "Music_Stream_App/user_service/Dockerfile"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@user_db:5432/userdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - user_db
+      - redis
     ports:
       - "8001:8001"
 
@@ -50,8 +53,11 @@ services:
       dockerfile: "Music_Stream_App/catalog_service/Dockerfile"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@catalog_db:5432/catalogdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - catalog_db
+      - redis
     ports:
       - "8002:8001"
 
@@ -61,10 +67,19 @@ services:
       dockerfile: "Music_Stream_App/playback_service/Dockerfile"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@playback_db:5432/playbackdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - playback_db
+      - redis
     ports:
       - "8003:8001"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
 volumes:
   userdb_pgdata:
