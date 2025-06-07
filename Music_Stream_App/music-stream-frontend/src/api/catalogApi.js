@@ -1,27 +1,17 @@
-// src/api/catalogApi.js
+const API_URL = "http://localhost:8002";
 
-const API_BASE_URL = "http://localhost:8002"; // catalog service
-
-export async function fetchSongs() {
-  const response = await fetch(`${API_BASE_URL}/tracks/`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch songs");
-  }
+export const fetchSongs = async () => {
+  const response = await fetch(`${API_URL}/songs`);
+  if (!response.ok) throw new Error("Failed to fetch songs");
   return response.json();
-}
+};
 
-export async function addSong(song) {
-  const response = await fetch(`${API_BASE_URL}/tracks/`, {
+export const addSong = async (songData) => {
+  const response = await fetch(`${API_URL}/tracks`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(song),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(songData),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to add song");
-  }
-
+  if (!response.ok) throw new Error("Failed to add song");
   return response.json();
-}
+};

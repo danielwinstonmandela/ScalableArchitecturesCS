@@ -1,44 +1,54 @@
 import React from "react";
 import SongList from "./components/SongList";
+import AddSongForm from "./components/AddSongForm";
 import { playSong } from "./api/playbackApi";
-import { addSong } from "./api/catalogApi";
 
 function App() {
   const handlePlay = async (songId) => {
     try {
       await playSong(songId);
-      alert("Playing song ID: " + songId);
+      alert(`▶️ Playing song ID: ${songId}`);
     } catch (error) {
-      alert("Error playing song: " + error.message);
-    }
-  };
-
-  const handleAddSong = async () => {
-    const newSong = {
-      title: "Song Title",
-      artist: "Artist Name",
-      album: "Album Name",
-      duration: 180,
-      genre: "Pop",
-      tags: ["pop", "2024"],
-    };
-
-    try {
-      const song = await addSong(newSong);
-      console.log("Added:", song);
-      alert("Song added successfully!");
-    } catch (err) {
-      alert("Error adding song: " + err.message);
+      alert("❌ Error playing song: " + error.message);
     }
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>Simple Music Streaming</h1>
-      <button onClick={handleAddSong}>Add Sample Song</button>
-      <SongList onPlay={handlePlay} />
+    <div style={styles.container}>
+      <h1 style={styles.header}>🎵 My Spotify-Lite</h1>
+      <div style={styles.card}>
+        <AddSongForm onSongAdded={() => window.location.reload()} />
+      </div>
+      <div style={styles.card}>
+        <SongList onPlay={handlePlay} />
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: 700,
+    margin: "0 auto",
+    padding: 20,
+    fontFamily: "Helvetica, Arial, sans-serif",
+    backgroundColor: "#121212",
+    minHeight: "100vh",
+    color: "#ffffff",
+  },
+  header: {
+    fontSize: "2.2rem",
+    textAlign: "center",
+    color: "#1DB954",
+    marginBottom: 30,
+  },
+  card: {
+    background: "#1e1e1e",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    boxShadow: "0 4px 10px rgba(0,0,0,0.6)",
+  },
+};
 
 export default App;
