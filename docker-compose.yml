@@ -1,0 +1,72 @@
+version: "3.9"
+services:
+  user_db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: userdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - userdb_pgdata:/var/lib/postgresql/data
+
+  catalog_db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: catalogdb
+    ports:
+      - "5434:5432"
+    volumes:
+      - catalogdb_pgdata:/var/lib/postgresql/data
+
+  playback_db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: playbackdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - playbackdb_pgdata:/var/lib/postgresql/data
+
+  user_service:
+    build:
+      context: .
+      dockerfile: "Music_Stream_App/user_service/Dockerfile"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@user_db:5432/userdb
+    depends_on:
+      - user_db
+    ports:
+      - "8001:8001"
+
+  catalog_service:
+    build:
+      context: .
+      dockerfile: "Music_Stream_App/catalog_service/Dockerfile"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@catalog_db:5432/catalogdb
+    depends_on:
+      - catalog_db
+    ports:
+      - "8002:8001"
+
+  playback_service:
+    build:
+      context: .
+      dockerfile: "Music_Stream_App/playback_service/Dockerfile"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@playback_db:5432/playbackdb
+    depends_on:
+      - playback_db
+    ports:
+      - "8003:8001"
+
+volumes:
+  userdb_pgdata:
+  catalogdb_pgdata:
+  playbackdb_pgdata:

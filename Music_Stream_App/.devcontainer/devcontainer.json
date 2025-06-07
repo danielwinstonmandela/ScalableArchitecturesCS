@@ -1,0 +1,8 @@
+{
+  "name": "Music Stream Codespace",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "user_service",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [8001, 8002, 8003, 5433, 5434, 5435],
+  "postCreateCommand": "echo 'Ready! Use docker-compose up --build to start all services.'"
+}
