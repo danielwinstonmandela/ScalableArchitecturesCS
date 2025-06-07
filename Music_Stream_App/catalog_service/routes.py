@@ -13,7 +13,8 @@ router = APIRouter()
 @router.get("/songs", response_model=list[SongOut])
 async def list_songs(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Song))
-    return result.scalars().all()
+    songs = result.scalars().all()
+    return [SongOut.from_orm(song) for song in songs]
 
 @router.post("/songs", response_model=SongOut)
 async def create_song(
@@ -40,7 +41,7 @@ async def create_song(
     db.add(new_song)
     await db.commit()
     await db.refresh(new_song)
-    return new_song
+    return SongOut.from_orm(new_song)
 
 @router.get("/songs/{song_id}/audio")
 async def get_song_audio(song_id: str, db: AsyncSession = Depends(get_db)):
@@ -48,7 +49,6 @@ async def get_song_audio(song_id: str, db: AsyncSession = Depends(get_db)):
     song = result.scalar_one_or_none()
     if song is None or not song.audio_blob:
         raise HTTPException(status_code=404, detail="Song not found")
-    # Replace audio/mpeg with the correct type if you store other formats
     return StreamingResponse(
         iter([song.audio_blob]),
         media_type="audio/mpeg"
