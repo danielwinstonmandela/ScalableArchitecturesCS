@@ -1,0 +1,12 @@
+{
+  "name": "scalablearchitecturescs",
+  "version": "1.0.0",
+  "description": "## 🧑‍💻 Team Members - Daniel Winston Mandela Tulung — 23/516260/PA/22080   - Rindra Adriansyah — 23/511559/PA/21820",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

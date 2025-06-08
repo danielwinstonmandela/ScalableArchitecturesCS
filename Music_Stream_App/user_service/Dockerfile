@@ -6,9 +6,11 @@ COPY Music_Stream_App/user_service /app/user_service/
 COPY Music_Stream_App/shared /app/shared/
 COPY Music_Stream_App/events /app/events/
 COPY Music_Stream_App/user_service/requirements.txt /app/requirements.txt
+COPY Music_Stream_App/user_service/wait-for-it.sh /wait-for-it.sh
 
 RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN chmod +x /wait-for-it.sh
 
 ENV PYTHONPATH=/app
 
-CMD ["uvicorn", "user_service.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["/wait-for-it.sh", "user_db:5432", "--", "uvicorn", "user_service.main:app", "--host", "0.0.0.0", "--port", "8001"]
