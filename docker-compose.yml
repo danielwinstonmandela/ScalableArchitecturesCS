@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - userdb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   catalog_db:
     image: postgres:16
@@ -21,6 +26,11 @@ services:
       - "5434:5432"
     volumes:
       - catalogdb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   playback_db:
     image: postgres:16
@@ -32,6 +42,11 @@ services:
       - "5435:5432"
     volumes:
       - playbackdb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   user_service:
     build:
@@ -41,11 +56,13 @@ services:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@user_db:5432/userdb
       REDIS_HOST: redis
       REDIS_PORT: 6379
-    depends_on:
-      - user_db
-      - redis
     ports:
       - "8001:8001"
+    depends_on:
+      user_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   catalog_service:
     build:
@@ -55,11 +72,13 @@ services:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@catalog_db:5432/catalogdb
       REDIS_HOST: redis
       REDIS_PORT: 6379
-    depends_on:
-      - catalog_db
-      - redis
     ports:
       - "8002:8001"
+    depends_on:
+      catalog_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   playback_service:
     build:
@@ -69,18 +88,25 @@ services:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@playback_db:5432/playbackdb
       REDIS_HOST: redis
       REDIS_PORT: 6379
-    depends_on:
-      - playback_db
-      - redis
     ports:
       - "8003:8001"
+    depends_on:
+      playback_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   redis:
     image: redis:7
     ports:
       - "6379:6379"
     restart: unless-stopped
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      
 volumes:
   userdb_pgdata:
   catalogdb_pgdata:
