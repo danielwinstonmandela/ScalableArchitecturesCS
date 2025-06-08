@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # <-- import CORS middleware
 from catalog_service.routes import router
 import os
 import redis
@@ -8,6 +9,22 @@ from catalog_service.models import Base
 
 # FastAPI app setup
 app = FastAPI()
+app.include_router(router)
+
+
+# Add this CORS middleware setup:
+origins = [
+    "http://localhost:3000",  # your React frontend URL (change if different)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,        # allow your frontend to access backend
+    allow_credentials=True,
+    allow_methods=["*"],          # allow all HTTP methods
+    allow_headers=["*"],          # allow all headers
+)
+
 app.include_router(router)
 
 # Redis setup
