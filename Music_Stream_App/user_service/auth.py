@@ -42,7 +42,8 @@ async def get_current_user(
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-    result = await db.execute(select(UserTable).filter_by(id=user_id))
+    # Use the correct model class here
+    result = await db.execute(select(User).filter_by(id=user_id))
     user = result.scalars().first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
