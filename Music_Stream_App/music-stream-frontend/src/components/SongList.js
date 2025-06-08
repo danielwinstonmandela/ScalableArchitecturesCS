@@ -28,18 +28,34 @@ function SongList() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleLoadedMetadata = () => setDuration(audio.duration);
-    const handleTimeUpdate = () => {
-      if (!isSeeking) setProgress(audio.currentTime);
+    const handleLoadedMetadata = () => {
+      console.log(`Duration loaded for song ID: ${currentSongIdRef.current}`, audio.duration);
+      setDuration(audio.duration);
     };
+    
+    const handleTimeUpdate = () => {
+      if (!isSeeking && audio.currentTime !== undefined) {
+        setProgress(audio.currentTime);
+      }
+    };
+    
     const handleEnded = () => {
       setIsPlaying(false);
       setProgress(0);
       setIsSeeking(false);
     };
+    
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
 
+    // Remove existing listeners first
+    audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.removeEventListener("timeupdate", handleTimeUpdate);
+    audio.removeEventListener("ended", handleEnded);
+    audio.removeEventListener("play", handlePlay);
+    audio.removeEventListener("pause", handlePause);
+
+    // Add listeners
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("ended", handleEnded);
@@ -53,19 +69,28 @@ function SongList() {
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
     };
-  }, [isSeeking]);
+  }, [isSeeking, currentSong?.id]); // Add currentSong?.id to dependencies
 
   // Load new song
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio && currentSong && currentSongIdRef.current !== currentSong.id) {
-      audio.src = `http://localhost:8002/songs/${currentSong.id}/audio`;
-      audio.volume = volume;
-      audio.load();
+    if (audio && currentSong) {
+      console.log(`Loading new song: ${currentSong.title} (ID: ${currentSong.id})`);
+      
+      // Reset everything first
+      audio.pause();
+      setIsPlaying(false);
       setProgress(0);
       setDuration(0);
-      setIsPlaying(false);
+      setIsSeeking(false);
+      
+      // Set new source and load
+      audio.src = `http://localhost:8002/songs/${currentSong.id}/audio`;
+      audio.volume = volume;
       currentSongIdRef.current = currentSong.id;
+      
+      // Load the new song
+      audio.load();
     }
   }, [currentSong, volume]);
 
@@ -94,33 +119,31 @@ function SongList() {
     const newTime = Number(e.target.value);
     const audio = audioRef.current;
     
+    console.log(`Seeking: ${newTime.toFixed(1)}s, Current Song ID: ${currentSongIdRef.current}, Duration: ${duration}`);
+    
     if (audio && duration > 0 && currentSong && currentSongIdRef.current === currentSong.id) {
-      console.log(`Seeking to: ${newTime.toFixed(1)}s`);
-      
-      // Temporarily disable timeupdate
       setIsSeeking(true);
-      
-      // Set audio time
       audio.currentTime = newTime;
-      
-      // Update progress
       setProgress(newTime);
       
-      // Re-enable timeupdate after audio has processed the seek
+      // Shorter timeout to prevent conflicts
       setTimeout(() => {
         setIsSeeking(false);
-      }, 200);
+      }, 100);
     }
   };
 
+  // Simpler seek handlers:
   const onSeekStart = () => {
+    console.log("Seek started");
     setIsSeeking(true);
   };
 
   const onSeekEnd = () => {
+    console.log("Seek ended");
     setTimeout(() => {
       setIsSeeking(false);
-    }, 200);
+    }, 100);
   };
 
   const onVolumeChange = (e) => {

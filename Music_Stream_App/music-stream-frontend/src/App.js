@@ -28,9 +28,10 @@ function App() {
         <div style={styles.headerContent}>
           <div style={styles.logo}>
             <span style={styles.logoIcon}>♪</span>
-            <h1 style={styles.title}>SpotifyLite</h1>
+            <h1 style={styles.title}>Sp0t1fy</h1>
+            <span style={styles.logoIcon}>♪</span>
           </div>
-          <div style={styles.subtitle}>Your personal music streaming experience</div>
+          <div style={styles.subtitle}>a scalable software engineering assignment</div>
         </div>
       </header>
 
@@ -76,7 +77,11 @@ function App() {
       {/* Footer */}
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
-          <span>Made with ♥ using Microservices Architecture</span>
+          <span>Made with ♥ using Microservices Architecture</span> <br />
+          <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>
+            Daniel Winston Mandela Tulung  | | Rindra Adriansyah <br />
+            © 2025 Sp0t1fy. All rights reserved.
+          </span>
           <div style={styles.footerLinks}>
             <span style={styles.footerLink}>User Service</span>
             <span style={styles.footerSeparator}>•</span>
